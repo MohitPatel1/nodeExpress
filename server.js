@@ -22,14 +22,16 @@ app.use(session({
   resave: true,
   saveUninitialized: true,
   cookie: { secure:false }
-}),passport.initialize(),passport.session());
+}))
+app.use(passport.initialize())
+app.use(passport.session())
 
 
-mongo.connect(process.env.MONGO_URI, (err, db) => {
+mongo.connect(process.env.MONGO_URI,{ useUnifiedTopology: true }, (err, db) => {
   if(err){
-    console.log(err)
-  }else{
     console.log("database error" + err)
+  }else{
+    console.log("database connected")
     const PORT = process.env.PORT || 3000;
 
     app.listen(PORT, () => {
