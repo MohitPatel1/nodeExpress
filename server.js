@@ -5,6 +5,7 @@ const myDB = require('./connection');
 const fccTesting = require('./freeCodeCamp/fcctesting.js');
 const session = require('express-session')
 const passport = require('passport')
+const LocalStrategy = require('passport-local')
 const { ObjectId } = require('mongodb')
 const mongo = require('mongodb').MongoClient
 
@@ -54,5 +55,28 @@ mongo.connect(uri, { useUnifiedTopology: true },(err, db) => {
         }
       ))
     })
+
+    let findUserDocument = new LocalStrategy(
+      (username, password, done) => {
+        db.collection('users').findOne(
+          {username : username},
+          (err, user) => {
+            if(err){
+              done(err)
+            }
+            else if(!user){
+              done(null, false)
+            }
+            else if(user.password !== password){
+              done(null, false)
+            }
+            else{
+              done(null, user)
+            }
+          }
+        )
+      }
+    )
+    passport.use(findUserDocument)
   }
 })
