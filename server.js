@@ -5,7 +5,7 @@ const myDB = require('./connection');
 const fccTesting = require('./freeCodeCamp/fcctesting.js');
 const session = require('express-session')
 const passport = require('passport')
-const ObjectId = require('mongodb')
+const { ObjectID } = require('mongodb')
 
 const app = express();
 
@@ -32,15 +32,13 @@ app.listen(PORT, () => {
   console.log('Listening on port ' + PORT);
 });
 
-let ;
-
 passport.serializeUser((user, done )=> {
   done(null, user._id)
 })
 
 passport.deserializeUser((userId, done) => {
   db.collection('user'.findOne(
-    {id: new ObjectId(userId)},
+    {id: new ObjectID(userId)},
     (error, doc) => {
       done(nul, null)
     }
