@@ -1,5 +1,5 @@
 'use strict';
-const dotenv = require('dotenv').config();
+require('dotenv').config();
 const express = require('express');
 const myDB = require('./connection');
 const fccTesting = require('./freeCodeCamp/fcctesting.js');
@@ -22,16 +22,17 @@ app.use(session({
   resave: true,
   saveUninitialized: true,
   cookie: { secure:false }
-}),passport.initialize(),passport.session());
+}))
+app.use(passport.initialize())
+app.use(passport.session())
 
-const uri = 'mongodb+srv://mohit:'+ process.env.PW + '@cluster0.qt5iza6.mongodb.net/fcc?retryWrites=true&w=majority'
+const url = 'mongodb+srv://Mohit:'+ process.env.PW +'@cluster0.w2hvjc1.mongodb.net/?retryWrites=true&w=majority'
 
-
-mongo.connect(uri, { useUnifiedTopology: true },(err, db) => {
+mongo.connect(url,{ useUnifiedTopology: true }, (err, db) => {
   if(err){
-    console.log(err)
-  }else{
     console.log("database error" + err)
+  }else{
+    console.log("database connected")
     const PORT = process.env.PORT || 3000;
 
     app.listen(PORT, () => {
@@ -39,7 +40,7 @@ mongo.connect(uri, { useUnifiedTopology: true },(err, db) => {
     });
 
     app.route('/').get((req, res) => {
-      res.render('index',{title:'Connected to Database',message:'Please log in'})
+      res.render('index',{ title: 'Hello', message: 'Please log in' })
     });
     
     passport.serializeUser((user, done )=> {
@@ -54,5 +55,7 @@ mongo.connect(uri, { useUnifiedTopology: true },(err, db) => {
         }
       ))
     })
+
+
   }
 })
