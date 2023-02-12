@@ -7,9 +7,8 @@ const session = require('express-session')
 const passport = require('passport')
 const LocalStrategy = require('passport-local')
 const { ObjectId } = require('mongodb')
-let bodyParser = require('body-parser')
 const mongo = require('mongodb').MongoClient
-
+let bodyParser = require('body-parser')
 const app = express();
 
 fccTesting(app); //For FCC testing purposes
@@ -30,10 +29,10 @@ const uri = 'mongodb+srv://mohit:'+ process.env.PW + '@cluster0.qt5iza6.mongodb.
 
 
 mongo.connect(uri, { useUnifiedTopology: true },(err, client) => {
-  let db = client.db('fcc')
   if(err){
     console.log(err)
   }else{
+    let db = client.db('fcc')
     console.log("database error" + err)
     const PORT = process.env.PORT || 3000;
 
@@ -42,7 +41,7 @@ mongo.connect(uri, { useUnifiedTopology: true },(err, client) => {
     });
 
     app.route('/').get((req, res) => {
-      res.render('index',{title:'Connected to Database', showLogin: true,message:'Please log in'})
+      res.render('index',{title:'Connected to Database',message:'Please log in', showLogin: true})
     });
     
     passport.serializeUser((user, done )=> {
@@ -63,6 +62,7 @@ mongo.connect(uri, { useUnifiedTopology: true },(err, client) => {
         db.collection('users').findOne(
           {username : username},
           (err, user) => {
+            console.log(`User ${username} attempted to log in.`);
             if(err){
               done(err)
             }
@@ -80,13 +80,16 @@ mongo.connect(uri, { useUnifiedTopology: true },(err, client) => {
       }
     )
     passport.use(findUserDocument)
-
+    
     app.post('/login',
-      bodyParser.urlencoded({extended: false})  ,
-      passport.authenticate('local', {failureRedirect: '/'}),
-      (req, res) => {
-        res.render('profile')
-      }
-    )
+            bodyParser.urlencoded( {extended: false} ),
+            passport.authenticate('local',{ failureRedirect: '/' }),
+            (req,res) => {
+               res.redirect('/profile')
+            })
+    app.get('/profile', (req, res) => {
+      res.render('profile');
+    })
+    
   }
 })
