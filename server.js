@@ -81,12 +81,8 @@ mongo.connect(uri, { useUnifiedTopology: true },(err, client) => {
     )
     passport.use(findUserDocument)
     
-    app.post('/login',
-            bodyParser.urlencoded( {extended: false} ),
-            passport.authenticate('local',{ failureRedirect: '/' }),
-            (req,res) => {
-               res.redirect('/profile')
-            })
+    app.route('/login').post(passport.authenticate('local', { failureRedirect: '/' }))
+    
     app.get('/profile', (req, res) => {
       res.render('profile');
     })
