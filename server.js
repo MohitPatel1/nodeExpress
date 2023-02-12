@@ -7,6 +7,7 @@ const session = require('express-session')
 const passport = require('passport')
 const LocalStrategy = require('passport-local')
 const { ObjectId } = require('mongodb')
+let bodyParser = require('body-parser')
 const mongo = require('mongodb').MongoClient
 
 const app = express();
@@ -28,7 +29,8 @@ app.use(session({
 const uri = 'mongodb+srv://mohit:'+ process.env.PW + '@cluster0.qt5iza6.mongodb.net/fcc?retryWrites=true&w=majority'
 
 
-mongo.connect(uri, { useUnifiedTopology: true },(err, db) => {
+mongo.connect(uri, { useUnifiedTopology: true },(err, client) => {
+  let db = client.db('fcc')
   if(err){
     console.log(err)
   }else{
@@ -40,7 +42,7 @@ mongo.connect(uri, { useUnifiedTopology: true },(err, db) => {
     });
 
     app.route('/').get((req, res) => {
-      res.render('index',{title:'Connected to Database',message:'Please log in'})
+      res.render('index',{title:'Connected to Database', showLogin: true,message:'Please log in'})
     });
     
     passport.serializeUser((user, done )=> {
@@ -78,5 +80,13 @@ mongo.connect(uri, { useUnifiedTopology: true },(err, db) => {
       }
     )
     passport.use(findUserDocument)
+
+    app.post('/login',
+      bodyParser.urlencoded({extended: false})  ,
+      passport.authenticate('local', {failureRedirect: '/'}),
+      (req, res) => {
+        res.render('profile')
+      }
+    )
   }
 })
