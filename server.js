@@ -41,7 +41,7 @@ mongo.connect(uri, { useUnifiedTopology: true },(err, client) => {
     });
 
     app.route('/').get((req, res) => {
-      res.render('index',{title:'Home page',message:'Please log in', showLogin: true})
+      res.render('index',{title:'Home page',message:'Please log in', showLogin: true, showRegistration: true})
     });
     
     passport.serializeUser((user, done )=> {
@@ -99,5 +99,48 @@ mongo.connect(uri, { useUnifiedTopology: true },(err, client) => {
     app.route('/profile').get(ensureAuthenticated, (req,res) => {
       res.render(process.cwd() + '/views/pug/profile', {username: req.user.username });
     });
+
+    app.get('/logout', (req, res) => {
+      req.logout();
+      res.redirect('/')
+    })
+
+    app.route('/register').post(
+      bodyParser.urlencoded({extended: false}),
+      (req, res, next) => {
+      db.collection('users').findOne(
+        {username: req.body.username},
+        (err, user) => {
+          if(!err && user){
+            res.redirect('/')
+          }
+        }
+      );
+        
+        db.collection('users').insertOne(
+           {
+             username: req.body.username,
+             password: req.body.password
+           },
+          (err, createdUser) => {
+            if(!err && createdUser){
+              next();
+            }
+          }
+        )
+      }
+    );
+
+    passport.authenticate('local', {failureRedirect: '/'}),
+      (req, res) => {
+        res.redirect('/profile')
+      }
+    
+
+    app.use((req, res) => {
+      res.status(404)
+      .type('text')
+      .send('Not Found')
+    })
   }
 })
