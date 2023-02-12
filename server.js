@@ -41,7 +41,7 @@ mongo.connect(uri, { useUnifiedTopology: true },(err, client) => {
     });
 
     app.route('/').get((req, res) => {
-      res.render('index',{title:'Connected to Database',message:'Please log in', showLogin: true})
+      res.render('index',{title:'Home page',message:'Please log in', showLogin: true})
     });
     
     passport.serializeUser((user, done )=> {
@@ -81,11 +81,24 @@ mongo.connect(uri, { useUnifiedTopology: true },(err, client) => {
     )
     passport.use(findUserDocument)
     
-    app.route('/login').post(passport.authenticate('local', { failureRedirect: '/' }))
+    // app.route('/login').post(passport.authenticate('local', { failureRedirect: '/' }))
+    app.route("/login").post(passport.authenticate('local', { failureRedirect: '/' }), (req, res) => {
+  res.redirect("/profile");
+});
+
+    function ensureAuthenticated(req, res, next) {
+      if (req.isAuthenticated()) {
+        return next();
+      }
+      res.redirect('/');
+    };
     
-    app.get('/profile', (req, res) => {
-      res.render('profile');
-    })
+    // app.get('/profile', ensureAuthenticated , (req, res) => {
+    //   res.render('profile');
+    // })
+    app.route('/profile').get(ensureAuthenticated, (req,res) => {
+    res.render(process.cwd() + '/views/pug/profile');
+ });
     
   }
 })
