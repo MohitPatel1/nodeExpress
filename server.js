@@ -8,7 +8,8 @@ const passport = require('passport')
 const LocalStrategy = require('passport-local')
 const { ObjectId } = require('mongodb')
 const mongo = require('mongodb').MongoClient
-let bodyParser = require('body-parser')
+let bodyParser = require('body-parser');
+let bcrypt = require('bcrypt')
 const app = express();
 
 fccTesting(app); //For FCC testing purposes
@@ -69,7 +70,7 @@ mongo.connect(uri, { useUnifiedTopology: true },(err, client) => {
             else if(!user){
               done(null, false)
             }
-            else if(user.password !== password){
+            else if(!bcrypt.compareSync(password, user.password)){
               done(null, false)
             }
             else{
@@ -116,11 +117,11 @@ mongo.connect(uri, { useUnifiedTopology: true },(err, client) => {
           }
         }
       );
-        
+        const hash = bcrypt.hashSync(req.body.password, 12);
         db.collection('users').insertOne(
            {
              username: req.body.username,
-             password: req.body.password
+             password: hash
            },
           (err, createdUser) => {
             if(!err && createdUser){
