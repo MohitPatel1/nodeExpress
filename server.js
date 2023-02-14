@@ -1,12 +1,4 @@
 'use strict';
-const app = express();
-fccTesting(app); //For FCC testing purposes
-app.use('/public', express.static(process.cwd() + '/public'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-app.set('view engine','pug')
-app.set('views','./views/pug')
 
 const dotenv = require('dotenv').config();
 const express = require('express');
@@ -22,6 +14,14 @@ let bcrypt = require('bcrypt')
 let auth = require('./auth')
 let routes = require('./routes')
 
+const app = express();
+fccTesting(app); //For FCC testing purposes
+app.use('/public', express.static(process.cwd() + '/public'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.set('view engine','pug')
+app.set('views','./views/pug')
 
 
 const uri = 'mongodb+srv://mohit:'+ process.env.PW + '@cluster0.qt5iza6.mongodb.net/fcc?retryWrites=true&w=majority'
@@ -33,7 +33,6 @@ mongo.connect(uri, { useUnifiedTopology: true },(err, client) => {
   }else{
     let db = client.db('fcc')
     console.log("database connected" + err)
-    const PORT = process.env.PORT || 3000;
 
     auth(app, db, session, passport, ObjectId, LocalStrategy, bcrypt)
 
