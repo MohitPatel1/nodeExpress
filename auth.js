@@ -1,5 +1,5 @@
 module.exports = (app, db, session, passport, ObjectId, LocalStrategy, bcrypt) => {
-    const PORT = process.env.PORT || 3000;
+    
     app.use(session({
         secret: process.env.SESSION_SECRET,
         resave: true,
