@@ -5,12 +5,18 @@ module.exports = (app, db, passport, bodyParser, bcrypt) => {
       });
   
       app.route('/').get((req, res) => {
-        res.render('index',{title:'Home page',message:'Please log in', showLogin: true, showRegistration: true})
+        res.render('index',{title:'Home page',message:'Please log in', showLogin: true, showRegistration: true, showSocialAuth: true})
       });
       
       app.route("/login").post(passport.authenticate('local', { failureRedirect: '/' }), (req, res) => {
         res.redirect("/profile");
       });
+
+      app.route('/auth/github').post(passport.authenticate('github'))
+
+      app.route('/auth/github/callback').post(passport.authenticate('github' , { failureRedirect: '/'}), (req, res) => {
+        res.redirect('profile')
+      })
   
       function ensureAuthenticated(req, res, next) {
         if (req.isAuthenticated()) {
