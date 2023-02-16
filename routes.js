@@ -12,9 +12,9 @@ module.exports = (app, db, passport, bodyParser, bcrypt) => {
         res.redirect("/profile");
       });
 
-      app.route('/auth/github').post(passport.authenticate('github'))
+      app.route('/auth/github').get(passport.authenticate('github'))
 
-      app.route('/auth/github/callback').post(passport.authenticate('github' , { failureRedirect: '/'}), (req, res) => {
+      app.route('/auth/github/callback').get(passport.authenticate('github' , { failureRedirect: '/'}), (req, res) => {
         res.redirect('profile')
       })
   
