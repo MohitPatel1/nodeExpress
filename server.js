@@ -14,6 +14,7 @@ let bcrypt = require('bcrypt')
 let auth = require('./auth')
 let routes = require('./routes')
 
+
 const app = express();
 fccTesting(app); //For FCC testing purposes
 app.use('/public', express.static(process.cwd() + '/public'));

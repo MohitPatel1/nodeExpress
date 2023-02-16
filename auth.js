@@ -1,4 +1,7 @@
-module.exports = (app, db, session, passport, ObjectId, LocalStrategy, bcrypt) => {
+module.exports = (app, db, session, passport, ObjectId, LocalStrategy, bcrypt, ) => {
+
+  const GitHubStrategy = require('passport-github').Strategy;
+  const dotenv = require('dotenv').config();
     
     app.use(session({
         secret: process.env.SESSION_SECRET,
@@ -19,6 +22,17 @@ module.exports = (app, db, session, passport, ObjectId, LocalStrategy, bcrypt) =
           }
         ))
       })
+
+      passport.use(new GitHubStrategy({
+        clientID: process.env.GITHUB_CLIENT_ID,
+        clientSecret: process.env.GITHUB_CLIENT_SECRET,
+        callbackURL: 'https://nodeExpress.mohitpatel9.repl.co/auth/github/callback'
+      },
+        function(accessToken, refreshToken, profile, cb) {
+          console.log(profile);
+          //Database logic here with callback containing your user object
+        }
+      ));
   
       let findUserDocument = new LocalStrategy(
         (username, password, done) => {
