@@ -36,8 +36,11 @@ mongo.connect(uri, { useUnifiedTopology: true },(err, client) => {
   }else{
     let db = client.db('fcc')
     console.log("database connected" + err)
+    let currentUsers = 0
     
     io.on('connection', socket => {
+      ++currentUsers;
+      io.emit('user count', currentUsers);
       console.log('A user has connected');
     });
 
