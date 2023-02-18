@@ -42,6 +42,12 @@ mongo.connect(uri, { useUnifiedTopology: true },(err, client) => {
       ++currentUsers;
       io.emit('user count', currentUsers);
       console.log('A user has connected');
+      socket.on('disconnect', () => {
+        console.log("A user has discommected")
+        --currentUsers;
+        io.emit('user count', currentUsers);
+        /*anything you want to do on disconnect*/
+      });
     });
 
     auth(app, db, session, passport, ObjectId, LocalStrategy, bcrypt)
