@@ -13,9 +13,11 @@ let bodyParser = require('body-parser');
 let bcrypt = require('bcrypt')
 let auth = require('./auth')
 let routes = require('./routes')
-
-
 const app = express();
+const http = require('http').createServer(app);
+const io = require('socket.io')(http);
+
+
 fccTesting(app); //For FCC testing purposes
 app.use('/public', express.static(process.cwd() + '/public'));
 app.use(express.json());
@@ -34,9 +36,13 @@ mongo.connect(uri, { useUnifiedTopology: true },(err, client) => {
   }else{
     let db = client.db('fcc')
     console.log("database connected" + err)
+    
+    io.on('connection', socket => {
+      console.log('A user has connected');
+    });
 
     auth(app, db, session, passport, ObjectId, LocalStrategy, bcrypt)
 
-    routes(app, db, passport, bodyParser, bcrypt)
+    routes(app, db, passport, bodyParser, bcrypt, http)
   }
 })

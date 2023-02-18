@@ -1,6 +1,6 @@
-module.exports = (app, db, passport, bodyParser, bcrypt) => {
+module.exports = (app, db, passport, bodyParser, bcrypt, http) => {
     const PORT = process.env.PORT || 3000;
-    app.listen(PORT, () => {
+      http.listen(PORT, () => {
         console.log('Listening on port ' + PORT);
       });
   
@@ -15,6 +15,7 @@ module.exports = (app, db, passport, bodyParser, bcrypt) => {
       app.route('/auth/github').get(passport.authenticate('github'))
 
       app.route('/auth/github/callback').get(passport.authenticate('github' , { failureRedirect: '/'}), (req, res) => {
+        req.session.user_id = req.user.id
         res.redirect('profile')
       })
   
@@ -28,7 +29,11 @@ module.exports = (app, db, passport, bodyParser, bcrypt) => {
       app.route('/profile').get(ensureAuthenticated, (req,res) => {
         res.render(process.cwd() + '/views/pug/profile', {username: req.user.username });
       });
-  
+      
+      app.route('/chat').get(ensureAuthenticated, (req,res) => {
+        res.render(process.cwd() + '/views/pug/chat', {user: req.user });
+      });
+
       app.get('/logout', (req, res) => {
         req.logout();
         res.redirect('/')
