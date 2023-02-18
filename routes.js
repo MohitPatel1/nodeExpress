@@ -1,8 +1,4 @@
 module.exports = (app, db, passport, bodyParser, bcrypt, http) => {
-    const PORT = process.env.PORT || 3000;
-      http.listen(PORT, () => {
-        console.log('Listening on port ' + PORT);
-      });
   
       app.route('/').get((req, res) => {
         res.render('index',{title:'Home page',message:'Please log in', showLogin: true, showRegistration: true, showSocialAuth: true})

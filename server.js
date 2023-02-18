@@ -81,4 +81,9 @@ mongo.connect(uri, { useUnifiedTopology: true },(err, client) => {
     console.log('failed connection to socket.io:', message);
     accept(null, false);
   }
+
+  const PORT = process.env.PORT || 3000;
+  http.listen(PORT, () => {
+    console.log('Listening on port ' + PORT);
+  });
 })
