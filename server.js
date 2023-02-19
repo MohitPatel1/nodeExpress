@@ -22,7 +22,6 @@ const MongoStore = require('connect-mongo')(session);
 const URI = process.env.MONGO_URI;
 const store = new MongoStore({ url: URI });
 
-
 fccTesting(app); //For FCC testing purposes
 app.use('/public', express.static(process.cwd() + '/public'));
 app.use(express.json());
@@ -36,6 +35,16 @@ app.use(session({
   key: 'express.sid',
   store: store
 }));
+
+function onAuthorizeSuccess(data, accept) {
+  console.log('successful connection to socket.io');
+
+  accept(null, true);
+}
+
+function onAuthorizeFail(data, message, error, accept) {
+  if (error) throw new Error(message);
+  console.log('failed connection to socket.io:', message);
 
 io.use(
   passportSocketIo.authorize({
@@ -80,16 +89,6 @@ mongo.connect(uri, { useUnifiedTopology: true },(err, client) => {
 
     routes(app, db, passport, bodyParser, bcrypt, http)
   }
-
-  function onAuthorizeSuccess(data, accept) {
-    console.log('successful connection to socket.io');
-  
-    accept(null, true);
-  }
-  
-  function onAuthorizeFail(data, message, error, accept) {
-    if (error) throw new Error(message);
-    console.log('failed connection to socket.io:', message);
     accept(null, false);
   }
 
