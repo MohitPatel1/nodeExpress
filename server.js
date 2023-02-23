@@ -88,6 +88,9 @@ mongo.connect(uri, { useUnifiedTopology: true },(err, client) => {
         console.log("A user has discommected")
         --currentUsers;
         io.emit('user count', currentUsers);
+        socket.on('chat message', (message) => {
+          io.emit('chat message', { username: socket.request.user.username, message });
+        });
         /*anything you want to do on disconnect*/
       });
     });
