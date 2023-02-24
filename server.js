@@ -48,7 +48,6 @@ function onAuthorizeFail(data, message, error, accept) {
   accept(null, false);
 }
 
-
 io.use(
   passportSocketIo.authorize({
     cookieParser: cookieParser,
@@ -60,13 +59,10 @@ io.use(
   })
 );
 
-
 app.set('view engine','pug')
 app.set('views','./views/pug')
 
-
 const uri = 'mongodb+srv://mohit:'+ process.env.PW + '@cluster0.qt5iza6.mongodb.net/fcc?retryWrites=true&w=majority'
-
 
 mongo.connect(uri, { useUnifiedTopology: true },(err, client) => {
   if(err){
